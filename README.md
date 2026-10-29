@@ -49,11 +49,13 @@ NeoForge and Forge use separate jars. Fabric bundles NightConfig core and toml
 3.8.0; NeoForge and Forge supply NightConfig themselves.
 
 The current jars passed source, compilation and dedicated-server runtime checks
-on the normal loaders and all listed minimum boundaries. Client checks for the
-original right-click implementation covered singleplayer on all three loaders
-and vanilla-client connections. The new inventory-feeding path has server checks;
-its real-client visuals and audio have not been checked. This coverage does not
-establish compatibility with every setup.
+on the normal loaders and all listed minimum boundaries. Inventory feeding was
+also exercised through real player input on vanilla clients connected to each
+normal server loader and in singleplayer on all three loaders. Checks covered
+stack pickup, repeated meals, visible green particles, adulthood with leftovers,
+server restarts, world reopening and settings reloaded between worlds in the same
+client. Sound reception was observed, but audible audio was not verified. These
+checks do not establish compatibility with every setup.
 
 ## Installation
 
@@ -114,13 +116,12 @@ A baby may briefly shake its head while the server accepts the food and sends
 the happy particles and sound. The server does not play the refusal sound for a
 successful feed. The client does not receive a custom config sync.
 
-The original right-click implementation's Minecraft 1.21.1 runtime checks with
-Villager Trade Enchant 1.0.0, Peek 1.1.0,
-Swap 1.1.0 and Labels 1.0.0 covered baby feeding and Enchant transactions.
-NeoForge included the real client screen; Forge and Fabric used server assertions
-for those transactions. Other interactions and combinations remain unverified.
-Inventory feeding was added after those companion checks. Mods that replace baby
-villager interaction, pickup or inventory handling can interfere.
+Minecraft 1.21.1 runtime checks with Villager Trade Enchant 1.0.0, Peek 1.1.0,
+Swap 1.1.0 and Labels 1.0.0 covered inventory feeding and actual Enchant screen
+transactions on all three normal loaders. Earlier right-click checks also covered
+that combination. Other interactions, companion features and combinations remain
+unverified. Mods that replace baby villager interaction, pickup or inventory
+handling can interfere.
 
 Removing this mod leaves ordinary vanilla age data; it adds no custom age
 storage or world data.
