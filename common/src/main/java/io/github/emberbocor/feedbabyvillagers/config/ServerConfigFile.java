@@ -20,10 +20,10 @@ final class ServerConfigFile {
             # Created on the first server or world start.
             # Restart the server or reopen the singleplayer world to apply changes.
 
-            # Allow players to feed baby villagers with food in their main hand.
+            # Enable main-hand feeding and automatic feeding from a baby's inventory.
             enabled = true
 
-            # Registered item IDs accepted for direct feeding. Every item has the same effect.
+            # Registered item IDs accepted for both feeding methods. Every item has the same effect.
             # Invalid entries are skipped. An empty list disables all feeding foods.
             foods = ["minecraft:bread", "minecraft:carrot", "minecraft:potato", "minecraft:beetroot"]
 
@@ -31,6 +31,10 @@ final class ServerConfigFile {
             # Uses vanilla animal-feeding rounding: remaining ticks / 20, then percentage,
             # rounded down to whole seconds. Near adulthood an item may remove zero seconds.
             growthPercent = 10
+
+            # Seconds between meals from a baby's inventory. Positive whole number.
+            # The first meal also waits this long. Does not add a cooldown to right-click feeding.
+            feedingIntervalSeconds = 3
             """;
 
     private ServerConfigFile() {

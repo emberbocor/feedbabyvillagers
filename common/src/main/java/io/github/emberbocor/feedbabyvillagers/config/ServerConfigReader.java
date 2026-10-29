@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 final class ServerConfigReader {
-    private static final Set<String> KEYS = Set.of("enabled", "foods", "growthPercent");
+    private static final Set<String> KEYS = Set.of("enabled", "foods", "growthPercent", "feedingIntervalSeconds");
 
     private final Path file;
 
@@ -35,7 +35,8 @@ final class ServerConfigReader {
             }
         }
         return new ServerConfig.Settings(enabled(config, defaults.enabled()),
-                foods(config, defaults.foods()), percent(config, defaults.growthPercent()));
+                foods(config, defaults.foods()), percent(config, defaults.growthPercent()),
+                interval(config, defaults.feedingIntervalSeconds()));
     }
 
     private boolean enabled(UnmodifiableConfig config, boolean fallback) {
@@ -81,6 +82,20 @@ final class ServerConfigReader {
             return ((Number) value).intValue();
         }
         warn("growthPercent must be a whole number from 1 to 100, got '{}'; using {}", value, fallback);
+        return fallback;
+    }
+
+    private int interval(UnmodifiableConfig config, int fallback) {
+        Object value = config.get("feedingIntervalSeconds");
+        if (value == null) {
+            return fallback;
+        }
+        if ((value instanceof Integer || value instanceof Long)
+                && ((Number) value).longValue() >= 1 && ((Number) value).longValue() <= Integer.MAX_VALUE) {
+            return ((Number) value).intValue();
+        }
+        warn("feedingIntervalSeconds must be a positive whole number no greater than {}, got '{}'; using {}",
+                Integer.MAX_VALUE, value, fallback);
         return fallback;
     }
 

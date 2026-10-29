@@ -5,16 +5,30 @@ Fabric, with no new items, blocks or network payloads.
 
 ## How to use
 
-Right-click an awake baby villager with a food item in your **main hand**. The
-default foods are bread, carrots, potatoes and beetroot. Each has the same effect:
-one item removes about 10% of the remaining growth time and produces green happy
-villager particles and the vanilla villager approval sound. Creative players
-keep their item. There is no additional feeding cooldown.
+There are two ways to feed an awake baby villager:
 
-The food is consumed directly for growth; it is not put in the villager's
-inventory. Offhand feeding is not supported. Adults and other interactions keep
-their normal behavior, including sleeping villagers, name tags and spawn eggs.
-Breeding, healing, AI and professions are unchanged.
+- Right-click with food in your **main hand**. One item is consumed, except in
+  Creative. There is no additional right-click cooldown.
+- Drop food nearby for the baby to pick up. It stores the stack in its vanilla
+  inventory, then eats one item every 3 seconds by default until it becomes an
+  adult or runs out of accepted food. The first meal also waits for that interval.
+
+The default foods are bread, carrots, potatoes and beetroot. Each item has the
+same effect: it removes about 10% of the remaining growth time and produces green
+happy villager particles and the vanilla villager approval sound.
+
+Right-click food is consumed directly and does not enter the villager's inventory.
+Dropped food uses normal pickup rules, including pickup delay, inventory capacity,
+and `mobGriefing` or the loader's corresponding permission hook. Configured custom
+foods can also be picked up by babies. Adults keep their normal pickup behavior.
+Automatic feeding pauses while sleeping and stops at adulthood; leftover food
+stays in the vanilla inventory. It also works with accepted food already stored
+there, including after a world reload. Its meal interval restarts after reopening
+the world, waking up, or running out of accepted food.
+
+Offhand feeding is not supported. Sleeping villagers, name tags and spawn eggs
+keep their normal right-click interactions. Adult breeding, healing, pathfinding
+and professions are unchanged.
 
 Growth uses vanilla age handling and animal-feeding rounding. Remaining ticks
 are divided by 20 to get whole seconds, then the configured percentage is applied
@@ -34,9 +48,12 @@ to finish naturally. There is no minimum speedup.
 NeoForge and Forge use separate jars. Fabric bundles NightConfig core and toml
 3.8.0; NeoForge and Forge supply NightConfig themselves.
 
-These boundaries are checked by source inspection and compilation during
-production. In-game behavior and mod compatibility still require manual testing;
-no game or runtime test has been run for this initial release.
+The current jars passed source, compilation and dedicated-server runtime checks
+on the normal loaders and all listed minimum boundaries. Client checks for the
+original right-click implementation covered singleplayer on all three loaders
+and vanilla-client connections. The new inventory-feeding path has server checks;
+its real-client visuals and audio have not been checked. This coverage does not
+establish compatibility with every setup.
 
 ## Installation
 
@@ -65,17 +82,23 @@ command.
 enabled = true
 foods = ["minecraft:bread", "minecraft:carrot", "minecraft:potato", "minecraft:beetroot"]
 growthPercent = 10
+feedingIntervalSeconds = 3
 ```
 
-- `enabled`: enable or disable direct feeding.
+- `enabled`: enable or disable both feeding methods.
 - `foods`: registered item IDs, including items from installed mods. Every item
   has the same growth effect. Invalid entries are skipped with warnings.
   `foods = []` is valid, and a list with no valid entries stays empty.
 - `growthPercent`: a whole number from 1 to 100, applied to the remaining growth
   time with vanilla rounding.
+- `feedingIntervalSeconds`: a positive whole number of seconds between inventory
+  meals (maximum 2147483647). Uses 20 server ticks per second; server lag can make
+  it take longer in real time. It does not delay right-click feeding. Existing
+  configs without this key use 3 seconds and are not rewritten.
 
 A missing key uses its default. A wrong type for `enabled`, a non-list `foods`,
-or an invalid `growthPercent` uses only that setting's default and logs a warning.
+or an invalid `growthPercent` or `feedingIntervalSeconds` uses only that setting's
+default and logs a warning.
 A broken or unreadable file uses all defaults and logs a warning. Existing files
 are left unchanged, including broken files.
 
@@ -91,10 +114,13 @@ A baby may briefly shake its head while the server accepts the food and sends
 the happy particles and sound. The server does not play the refusal sound for a
 successful feed. The client does not receive a custom config sync.
 
-Villager Trade Enchant's Minecraft 1.21.1 interaction mixin skips babies in its
-source, so its interaction is separate from feeding. Combined runtime testing
-with it and other villager mods has not been performed. Mods that replace baby
-villager interaction can interfere.
+The original right-click implementation's Minecraft 1.21.1 runtime checks with
+Villager Trade Enchant 1.0.0, Peek 1.1.0,
+Swap 1.1.0 and Labels 1.0.0 covered baby feeding and Enchant transactions.
+NeoForge included the real client screen; Forge and Fabric used server assertions
+for those transactions. Other interactions and combinations remain unverified.
+Inventory feeding was added after those companion checks. Mods that replace baby
+villager interaction, pickup or inventory handling can interfere.
 
 Removing this mod leaves ordinary vanilla age data; it adds no custom age
 storage or world data.
@@ -114,8 +140,9 @@ Distributable jars are in `neoforge/build/libs`, `forge/build/libs` and
 Minimum compilation commands are documented in `gradle.properties`. Production
 verification adds `-Xlint:all` to every Java compile using an external Gradle init
 script. Build and compile checks do not start Minecraft. Development launcher
-profiles are deferred until runtime review to avoid preparing game directories
-during an IDE import.
+profiles are omitted from the production project to avoid preparing game
+directories during an IDE import. Runtime testing uses temporary profiles in an
+isolated scratch copy.
 
 ## License
 

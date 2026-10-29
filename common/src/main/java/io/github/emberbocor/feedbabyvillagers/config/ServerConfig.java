@@ -9,7 +9,7 @@ import net.minecraft.world.item.Items;
 
 public final class ServerConfig {
     static final Settings DEFAULTS = new Settings(true,
-            Set.of(Items.BREAD, Items.CARROT, Items.POTATO, Items.BEETROOT), 10);
+            Set.of(Items.BREAD, Items.CARROT, Items.POTATO, Items.BEETROOT), 10, 3);
 
     private static volatile Settings settings = DEFAULTS;
 
@@ -25,7 +25,7 @@ public final class ServerConfig {
         return settings;
     }
 
-    public record Settings(boolean enabled, Set<Item> foods, int growthPercent) {
+    public record Settings(boolean enabled, Set<Item> foods, int growthPercent, int feedingIntervalSeconds) {
         public Settings {
             foods = Set.copyOf(foods);
         }
