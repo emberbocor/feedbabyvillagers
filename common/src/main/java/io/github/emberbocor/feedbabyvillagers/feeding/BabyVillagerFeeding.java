@@ -23,7 +23,9 @@ public final class BabyVillagerFeeding {
             return false;
         }
 
-        stack.consume(1, player);
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
         grow(villager, level, settings.growthPercent());
         return true;
     }
