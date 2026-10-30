@@ -1,153 +1,99 @@
 # Feed Baby Villagers
 
-Feed baby villagers to speed up their growth. Available for NeoForge, Forge and
-Fabric, with no new items, blocks or network payloads.
+Help baby villagers grow up faster.
 
-## How to use
+Feed Baby Villagers lets you feed baby villagers the same way you feed baby animals. Right-click a baby with bread, carrots, potatoes or beetroot and it grows up a bit faster, with green particles and a happy villager sound. Babies also eat food they pick up from the ground, so you can drop a stack and let them grow on their own.
 
-There are two ways to feed an awake baby villager:
+The mod runs on the server only. Players join with a plain vanilla client and still see the particles and hear the sound.
 
-- Right-click with food in your **main hand**. One item is consumed, except in
-  Creative. There is no additional right-click cooldown.
-- Drop food nearby for the baby to pick up. It stores the stack in its vanilla
-  inventory, then eats one item every 3 seconds by default until it becomes an
-  adult or runs out of accepted food. The first meal also waits for that interval.
+Available for NeoForge, Forge and Fabric.
 
-The default foods are bread, carrots, potatoes and beetroot. Each item has the
-same effect: it removes about 10% of the remaining growth time and produces green
-happy villager particles and the vanilla villager approval sound.
+## Features
 
-Right-click food is consumed directly and does not enter the villager's inventory.
-Dropped food uses normal pickup rules, including pickup delay, inventory capacity,
-and `mobGriefing` or the loader's corresponding permission hook. Configured custom
-foods can also be picked up by babies. Adults keep their normal pickup behavior.
-Automatic feeding pauses while sleeping and stops at adulthood; leftover food
-stays in the vanilla inventory. It also works with accepted food already stored
-there, including after a world reload. Its meal interval restarts after reopening
-the world, waking up, or running out of accepted food.
+- **Hand feeding.** Right-click a baby villager with food in your main hand. One item is used (none in Creative) and the baby's remaining growth time drops by 10%. There is no cooldown: feed as often as you like.
+- **Self-feeding.** Drop food near a baby villager. It picks the food up like any villager does and eats one item every 3 seconds until it is grown up or runs out of food. Leftover food stays in its inventory.
+- **Vanilla feedback.** Every meal shows the green happy villager particles and plays the villager's approval sound.
+- **Configurable.** The foods, the growth per item, the time between meals and the whole mod can be changed or turned off in the server config. Food from other mods can be added.
 
-Offhand feeding is not supported. Sleeping villagers, name tags and spawn eggs
-keep their normal right-click interactions. Adult breeding, healing, pathfinding
-and professions are unchanged.
+## How growing works
 
-Growth uses vanilla age handling and animal-feeding rounding. Remaining ticks
-are divided by 20 to get whole seconds, then the configured percentage is applied
-and rounded down to whole seconds. At the default 10%, a baby with 20 minutes
-remaining gains 2 minutes. Near adulthood a food item can remove **zero seconds**
-and is still consumed. Even 100% leaves any remainder shorter than one second
-to finish naturally. There is no minimum speedup.
+Growth works like feeding a baby animal in vanilla. The remaining growth time is taken in whole seconds, and each item removes the configured percentage of it, rounded down. A baby with 20 minutes left gains 2 minutes from its first meal at the default 10%; each further meal gains a little less.
+
+- Close to adulthood a meal can remove less than a second. Such a meal still uses the item, and the baby finishes growing on its own.
+- With `growthPercent = 100` one item can finish the growth at once. As with baby animals in vanilla, the time skipped this way can then become a short breeding cooldown for the new adult.
+- Self-feeding pauses while the baby sleeps. The time until the next meal starts over after the world is reopened, after the baby wakes up and after it runs out of food.
+- Only the main hand feeds. Sleeping babies, name tags and spawn eggs keep their normal right-click.
+- On NeoForge and Forge, sneaking while right-clicking skips villager interaction, so it does not feed. On Fabric, sneak-right-click feeds as well.
 
 ## Requirements
 
-| Loader | Minecraft | Minimum loader | Additional requirement |
-| --- | --- | --- | --- |
-| NeoForge | 1.21.1 | 21.1.1 | Java 21 |
-| Forge | 1.21.1 | 52.0.0 | Java 21 |
-| Fabric | 1.21–1.21.1 | Fabric Loader 0.15.11 | Fabric API 0.102.0+ for your Minecraft version, Java 21 |
+| | NeoForge | Forge | Fabric |
+|---|---|---|---|
+| Minecraft | 1.21.1 | 1.21.1 | 1.21 or 1.21.1 |
+| Loader | NeoForge 21.1.1 or newer | Forge 52.0.0 or newer | Fabric Loader 0.15.11 or newer |
+| Other | | | Fabric API 0.102.0 or newer |
+| Jar | `feedbabyvillagers-neoforge-1.21.1-<version>.jar` | `feedbabyvillagers-forge-1.21.1-<version>.jar` | `feedbabyvillagers-fabric-1.21-1.21.1-<version>.jar` |
 
-NeoForge and Forge use separate jars. Fabric bundles NightConfig core and toml
-3.8.0; NeoForge and Forge supply NightConfig themselves.
+On Minecraft 1.21.1, NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your server's loader.
 
-The current jars passed source, compilation and dedicated-server runtime checks
-on the normal loaders and all listed minimum boundaries. Inventory feeding was
-also exercised through real player input on vanilla clients connected to each
-normal server loader and in singleplayer on all three loaders. Checks covered
-stack pickup, repeated meals, visible green particles, adulthood with leftovers,
-server restarts, world reopening and settings reloaded between worlds in the same
-client. Sound reception was observed, but audible audio was not verified. These
-checks do not establish compatibility with every setup.
+The Fabric jar bundles [NightConfig](https://github.com/TheElectronWill/night-config) (core and toml, LGPL-3.0) to read the TOML config. NeoForge and Forge already ship it.
 
-## Installation
+### Client and server
 
-- **Multiplayer:** put the jar for your server's loader in its `mods` folder.
-  Fabric servers also need Fabric API. Players can join with a vanilla client
-  without this mod; particles and sound use vanilla packets. Other installed
-  mods may have their own client requirements.
-- **Singleplayer:** install the appropriate loader and put its jar in your
-  game's `mods` folder. Install Fabric API too when using Fabric.
+Install the mod on the server only, on every loader. It adds no items, blocks, entities, network messages or registries, so the server has nothing a client needs to know about:
 
-Use the jar matching the loader:
+- **NeoForge:** vanilla clients and NeoForge clients without the mod can join.
+- **Forge:** vanilla clients and Forge clients without the mod can join. The mod is marked as server-only, so a Forge client without it still shows the server as compatible in the server list.
+- **Fabric:** vanilla clients and Fabric clients without the mod can join. Fabric API is only needed on the server.
 
-- `feedbabyvillagers-neoforge-1.21.1-1.0.0.jar`
-- `feedbabyvillagers-forge-1.21.1-1.0.0.jar`
-- `feedbabyvillagers-fabric-1.21-1.21.1-1.0.0.jar`
+Installing it on a client as well does no harm. The client does not know the server's food list, so a baby may briefly shake its head when you feed it; the server still accepts the food and sends the particles and sound.
+
+In singleplayer, install it in your own game; the built-in server runs it.
 
 ## Configuration
 
-The file is `config/feedbabyvillagers-server.toml`. It is created with English
-comments when a server or singleplayer world first starts. Restart the server
-or close and reopen the world to apply edits. It is shared by worlds using that
-game installation's config directory; there is no per-world override or reload
-command.
+### Server: `config/feedbabyvillagers-server.toml`
+
+Created with comments on the first server or world start:
 
 ```toml
+# Enable main-hand feeding and automatic feeding from a baby's inventory.
 enabled = true
+
+# Registered item IDs accepted for both feeding methods. Every item has the same effect.
+# Invalid entries are skipped. An empty list disables all feeding foods.
 foods = ["minecraft:bread", "minecraft:carrot", "minecraft:potato", "minecraft:beetroot"]
+
+# Percentage of remaining growth time removed per item. Whole number from 1 to 100.
 growthPercent = 10
+
+# Seconds between meals from a baby's inventory. Positive whole number.
+# The first meal also waits this long. Does not add a cooldown to right-click feeding.
 feedingIntervalSeconds = 3
 ```
 
-- `enabled`: enable or disable both feeding methods.
-- `foods`: registered item IDs, including items from installed mods. Every item
-  has the same growth effect. Invalid entries are skipped with warnings.
-  `foods = []` is valid, and a list with no valid entries stays empty.
-- `growthPercent`: a whole number from 1 to 100, applied to the remaining growth
-  time with vanilla rounding.
-- `feedingIntervalSeconds`: a positive whole number of seconds between inventory
-  meals (maximum 2147483647). Uses 20 server ticks per second; server lag can make
-  it take longer in real time. It does not delay right-click feeding. Existing
-  configs without this key use 3 seconds and are not rewritten.
+- `foods` accepts any item ID, also from other mods. Babies then also pick those items up from the ground.
+- Changes take effect after a server restart, or after closing and reopening a singleplayer world.
+- Mistakes do not crash the server. An invalid value uses the default for that setting, unknown item IDs are skipped, and each problem is logged as a warning. If the file cannot be read at all (for example a TOML syntax error), all defaults are used, the file is left untouched and the log says why.
 
-A missing key uses its default. A wrong type for `enabled`, a non-list `foods`,
-or an invalid `growthPercent` or `feedingIntervalSeconds` uses only that setting's
-default and logs a warning.
-A broken or unreadable file uses all defaults and logs a warning. Existing files
-are left unchanged, including broken files.
+## Removing the mod
 
-## Interaction details and compatibility
+The world opens normally. Babies keep the growth they already gained and grow up at the vanilla pace. Food they picked up stays in their inventory, as it would in vanilla. The config file stays in `config/` until you delete it.
 
-The mod preserves each loader's normal villager interaction gates. Ordinary
-right-click feeds on all three loaders. Sneak-right-click bypasses villager
-interaction on NeoForge and Forge, so it does not feed; on Fabric the vanilla
-baby interaction is reached and feeding works.
+## Compatibility
 
-Client prediction remains vanilla, even with the mod installed on the client.
-A baby may briefly shake its head while the server accepts the food and sends
-the happy particles and sound. The server does not play the refusal sound for a
-successful feed. The client does not receive a custom config sync.
+- **Villager Trade Peek, Villager Trade Swap, Villager Trade Labels, Villager Trade Enchant:** work together.
+- In vanilla, villagers of any age already pick up bread, carrots, potatoes and beetroot. With this mod, babies eat what they collect. In a villager breeder, keep babies away from the food meant for the adults (most breeders already drop the babies out).
+- Mods that change how baby villagers react to right-clicks, pick up items or use their inventory may interfere.
 
-Minecraft 1.21.1 runtime checks with Villager Trade Enchant 1.0.0, Peek 1.1.0,
-Swap 1.1.0 and Labels 1.0.0 covered inventory feeding and actual Enchant screen
-transactions on all three normal loaders. Earlier right-click checks also covered
-that combination. Other interactions, companion features and combinations remain
-unverified. Mods that replace baby villager interaction, pickup or inventory
-handling can interfere.
+## Building from source
 
-Removing this mod leaves ordinary vanilla age data; it adds no custom age
-storage or world data.
-
-## Building
-
-Use JDK 21. The wrapper uses Gradle 9.3.1. The build follows the `common`,
-`neoforge`, `forge`, `fabric` and `buildSrc` multiloader layout.
-
-```sh
+```
 ./gradlew build
 ```
 
-Distributable jars are in `neoforge/build/libs`, `forge/build/libs` and
-`fabric/build/libs`. The `common` jar is not a standalone mod.
-
-Minimum compilation commands are documented in `gradle.properties`. Production
-verification adds `-Xlint:all` to every Java compile using an external Gradle init
-script. Build and compile checks do not start Minecraft. Development launcher
-profiles are omitted from the production project to avoid preparing game
-directories during an IDE import. Runtime testing uses temporary profiles in an
-isolated scratch copy.
+The jars are written to `neoforge/build/libs/`, `forge/build/libs/` and `fabric/build/libs/`.
 
 ## License
 
-MIT, copyright 2026 emberbocor. See [LICENSE](LICENSE).
-
-The Fabric jar bundles NightConfig core and toml 3.8.0, licensed under
-[LGPL-3.0](https://github.com/TheElectronWill/night-config/tree/v3.8.0).
+MIT. The Fabric jar includes NightConfig, which is licensed under the LGPL-3.0.
