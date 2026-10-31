@@ -29,13 +29,13 @@ Growth works like feeding a baby animal in vanilla. The remaining growth time is
 
 | | NeoForge | Forge | Fabric |
 |---|---|---|---|
-| Minecraft | 26.2 | 26.2 | 26.2 |
+| Minecraft | 26.3 | 26.3 | 26.3 |
 | Java | 25 | 25 | 25 |
-| Loader | NeoForge 26.2.0.0-beta or newer | Forge 65.0.0 or newer | Fabric Loader 0.18.4 or newer |
-| Other | | | Fabric API 0.152.1 or newer |
-| Jar | `feedbabyvillagers-neoforge-26.2-<version>.jar` | `feedbabyvillagers-forge-26.2-<version>.jar` | `feedbabyvillagers-fabric-26.2-<version>.jar` |
+| Loader | NeoForge 26.3.0.0-beta or newer | Forge 66.0.0 or newer | Fabric Loader 0.19.3 or newer |
+| Other | | | Fabric API 0.160.5 or newer |
+| Jar | `feedbabyvillagers-neoforge-26.3-<version>.jar` | `feedbabyvillagers-forge-26.3-<version>.jar` | `feedbabyvillagers-fabric-26.3-<version>.jar` |
 
-On Minecraft 26.2, NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your server's loader.
+On Minecraft 26.3, NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your server's loader.
 
 The Fabric jar bundles [NightConfig](https://github.com/TheElectronWill/night-config) (core and toml, LGPL-3.0) to read the TOML config. NeoForge and Forge already ship it.
 
