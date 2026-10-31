@@ -9,6 +9,21 @@ neoForge {
         minecraftVersion = parchment_minecraft_version
         mappingsVersion = parchment_mappings_version
     }
+    runs {
+        configureEach {
+            gameDirectory = rootProject.file('runs/1.21.11/neoforge')
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)

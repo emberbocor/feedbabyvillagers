@@ -12,7 +12,7 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 import io.github.emberbocor.feedbabyvillagers.FeedBabyVillagers;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
 final class ServerConfigReader {
@@ -62,11 +62,11 @@ final class ServerConfigReader {
         }
         Set<Item> foods = new HashSet<>();
         for (Object entry : entries) {
-            ResourceLocation id = entry instanceof String text ? ResourceLocation.tryParse(text) : null;
+            Identifier id = entry instanceof String text ? Identifier.tryParse(text) : null;
             if (id == null || !BuiltInRegistries.ITEM.containsKey(id)) {
                 warn("invalid or unknown food item ID '{}', skipped", entry);
             } else {
-                foods.add(BuiltInRegistries.ITEM.get(id));
+                foods.add(BuiltInRegistries.ITEM.getValue(id));
             }
         }
         return foods;

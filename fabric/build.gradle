@@ -34,7 +34,18 @@ dependencies {
 }
 
 loom {
-    runs.configureEach {
-        ideConfigGenerated(false)
+    runs {
+        client {
+            client()
+            configName = 'Fabric Client'
+            ideConfigGenerated(true)
+            runDir(project.relativePath(rootProject.file('runs/1.21.11/fabric-client')))
+        }
+        server {
+            server()
+            configName = 'Fabric Server'
+            ideConfigGenerated(true)
+            runDir(project.relativePath(rootProject.file('runs/1.21.11/fabric-server')))
+        }
     }
 }

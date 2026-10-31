@@ -8,9 +8,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.emberbocor.feedbabyvillagers.feeding.BabyVillagerFeeding;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -19,7 +20,7 @@ public abstract class VillagerMixin {
     @Unique
     private long feedbabyvillagers$inventoryFeedingTicks;
 
-    @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/Villager;isBaby()Z"), cancellable = true)
+    @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/villager/Villager;isBaby()Z"), cancellable = true)
     private void feedbabyvillagers$feedBaby(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         if (BabyVillagerFeeding.feed((Villager) (Object) this, player, hand)) {
             cir.setReturnValue(InteractionResult.CONSUME);
@@ -27,7 +28,7 @@ public abstract class VillagerMixin {
     }
 
     @Inject(method = "wantsToPickUp", at = @At("RETURN"), cancellable = true)
-    private void feedbabyvillagers$wantFood(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    private void feedbabyvillagers$wantFood(ServerLevel level, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (BabyVillagerFeeding.wantsFood((Villager) (Object) this, stack)) {
             cir.setReturnValue(true);
         }
